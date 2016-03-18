@@ -22,3 +22,6 @@ Functions written:
 2014 Data available by mail on CD by request from FEMA. Compressed copies are available on AWS in the following formats
 [(7zip)](https://s3.amazonaws.com/cpsm.nfirs/NFIRS-2014/NFIRS2014.7z)
 [(RData)](https://s3.amazonaws.com/cpsm.nfirs/NFIRS-2014/NFIRS2014.RData).
+
+Bittorrent versions here: [(7zip-BT)](https://s3.amazonaws.com/cpsm.nfirs/NFIRS-2014/NFIRS2014.7z?torrent)
+[(RData-BT)](https://s3.amazonaws.com/cpsm.nfirs/NFIRS-2014/NFIRS2014.RData?torrent).
