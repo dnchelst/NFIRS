@@ -1,24 +1,32 @@
+source(file.path(script.dir, "nfirs_functions.R"))
 script.dir <- "/home/dov/git/nfirs"
 data.dir <- "/home/dov/Public/NFIRS/NFIRS2014"
 
-basic.file <- "basicincident.txt" %>% file.path(data.dir, .)
-lookup.file <- "codelookup.txt" %>% file.path(data.dir, .)
-address.file <- "incidentaddress.txt" %>% file.path(data.dir, .)
-fdheader.file <- "fdheader.txt" %>% file.path(data.dir, .)
-fire.file <- "fireincident.txt" %>% file.path(data.dir, .)
-cause.file <- "causes-fixed.txt" %>% file.path(data.dir, .)
-source(file.path(script.dir, "nfirs_functions.R"))
+nfirs.files <- list(
+  basic = "basicincident", codes = "codelookup", address="incidentaddress",
+  fdheader = "", fire = "fireincident", cause="causes-fixed", 
+  aid = "basicaid", wildlands = "", arson = "", 
+  civilian = "civiliancasualty", hazmat = "", firefighter="ffcasualty", ems="",
+  hazchem="", arson.referal="arsonagencyreferal", 
+  hazmat.equip="hazmatequipinvolved", arson.juv="arsonjuvsub", 
+  hazmobprop = "", ffequip = "ffequipfail"
+)
 
-# load files
-basic <- ReadBasic(basic.file)
-code.lookup <- read_delim(lookup.file, delim="^")
-fdheader <- ReadAll(fdheader.file, 18)
-address <- ReadAll(address.file, 17)
-fire <- ReadFire(fire.file)
-cause <- ReadAll(cause.file, 10)
+nfirs.data <- list()
+for (name1 in names(nfirs.files)){
+  file1 <- nfirs.files[[name1]]
+  # file name
+  file.name <- ifelse(file1=="", name1, file1) %>% 
+    paste0(".txt") 
+  print(paste(file.name, Sys.time()))
+  name2 <- ifelse(name1 %in% names(ReadNFIRS), name1, "default")
+  # load files
+  nfirs.data[[name1]] <- file.name %>% file.path(data.dir, .) %>%
+    ReadNFIRS[[name2]]() 
+}
 
 # store in RData format
-save(basic, code.lookup, fdheader, address, fire, cause,
+save(nfirs.data,
      file=file.path(data.dir, "NFIRS2014.RData"))
 
 load(file.path(data.dir, "NFIRS2014.RData"))
