@@ -2,7 +2,13 @@ library("dplyr")
 library("readr")
 library("lubridate")
 library("gdata")
+library("stringr")
 
+mdy2 <- function(time1) {
+  time2 <- str_pad(time1, 8, side="left", pad="0")
+  time3 <- mdy(time2)
+  return(time3)
+}
 mdy_hms2 <- function(time1) {
   time2 <- str_pad(time1, 14, side="right", pad="0")
   time3 <- mdy_hms(time2)
@@ -25,7 +31,7 @@ ReadAll <- function(file1, ncol, integer.columns=c(), time.columns=c()){
     }
   }
   if("INC_DATE" %in% names(df)){
-    df <- mutate(df, INC_DATE=mdy(INC_DATE))
+    df <- mutate(df, INC_DATE=mdy2(INC_DATE))
   }
   if("VERSION" %in% names(df)){
     df <- select(df, -VERSION)
@@ -46,4 +52,9 @@ ReadFire <- function(fire.file){
                        "BLDG_LGTH", "BLDG_WIDTH", "TOT_SQ_FT")
   fire <- ReadAll(fire.file, 80, integer.columns=integer.columns1)
   return(fire)
+}
+
+ReadCause <- function(cause.file){
+  cause.header <- read.delim(cause.file, sep="^", header=FALSE, nrows=1)
+  cause.header <- cause.header[1, ]
 }

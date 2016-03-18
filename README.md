@@ -6,8 +6,10 @@ Packages include:
 * dplyr
 * readr
 * lubridate
+* gdata
+* stringr
 
 Functions:
-* ReadAllChar
+* ReadAll
 * ReadBasic
 * ReadAddress
