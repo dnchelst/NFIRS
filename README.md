@@ -18,4 +18,6 @@ Functions:
   + ReadInjury  
   + ReadHazmat  
 
-
+Data available on by request from FEMA or on AWS 
+[7zip](https://s3.amazonaws.com/cpsm.nfirs/NFIRS-2014/NFIRS2014.7z)
+[RData](https://s3.amazonaws.com/cpsm.nfirs/NFIRS-2014/NFIRS2014.RData)
