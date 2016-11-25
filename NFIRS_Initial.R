@@ -1,6 +1,7 @@
+script.dir <- "/home/dchelst/git/NFIRS"
+data.dir <- "/home/dchelst/Public_Data/NFIRS/NFIRS2014"
 source(file.path(script.dir, "nfirs_functions.R"))
-script.dir <- "/home/dov/git/nfirs"
-data.dir <- "/home/dov/Public/NFIRS/NFIRS2014"
+
 
 nfirs.files <- list(
   basic = "basicincident", codes = "codelookup", address="incidentaddress",
@@ -29,4 +30,16 @@ for (name1 in names(nfirs.files)){
 save(nfirs.data,
      file=file.path(data.dir, "NFIRS2014.RData"))
 
+
+# Quick Analysis
 load(file.path(data.dir, "NFIRS2014.RData"))
+
+
+inc.codes <- nfirs.data$codes %>% 
+  filter(fieldid=="INC_TYPE") %>% 
+  select(-fieldid)
+
+nfirs.data$basic %>%
+  count(INC_TYPE) %>%
+  left_join(inc.codes, by=c("INC_TYPE"="code_value")) %>%
+  View
