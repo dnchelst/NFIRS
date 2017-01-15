@@ -23,14 +23,34 @@ aid.count.detail <- nfirs.data$basic %>%
   spread(AID2, n, fill=0) %>% 
   mutate(fieldid="INC_TYPE") %>%
   left_join(nfirs.data$codes, by=c("fieldid", "INC_TYPE"="code_value")) %>%
-  select(INC_TYPE, code_descr, received, given, alone) %>%
-  mutate(total = alone + received + given,
-         received.pct = round(100 * received / total, 1),
-         aid.pct = round(100 * (given + received) / total, 1))
-           
-alone + received,
-         percent = round(100 * received / total, 1)) 
+  select(INC_TYPE, code_descr, received, given, alone) 
+aid.count.detail <- aid.count.detail %>% 
+  select(received:alone) %>% 
+  colSums %>% 
+  t %>% 
+  as.data.frame %>% 
+  bind_rows(aid.count.detail, .) %>%
+  mutate(total = received + given + alone,
+         received.pct = round(100 * received / (received + alone), 1))
 
+# aid detail by fdid - focus on structure fires
+aid.count.fdid <- nfirs.data$basic %>%
+  mutate(INC_TYPE = as.numeric(INC_TYPE)) %>%
+  filter(between(INC_TYPE, 110, 123)) %>% 
+  left_join(aid.df, by="AID") %>%
+  count(STATE, FDID, AID2) %>%
+  ungroup %>%
+  spread(AID2, n, fill=0) %>%
+  mutate(sub.total = alone + received,
+         total = sub.total + given,
+         received.pct = round(100 * received / (sub.total), 1),
+         received.pct = ifelse(sub.total==0, NA, received.pct))  %>%
+  left_join(select(nfirs.data$fdheader, STATE, FDID, FD_NAME, FD_CITY)) %>%
+  mutate(FD_NAME = toupper(FD_NAME))
+
+# focus on illinois
+aid.count.illinois <- aid.count.fdid %>%
+  filter(STATE=="IL")
 
 ## 2: check of basic counts number of mutual aid given records
 sum(nfirs.data$basic$AID %in% c(3:4)) # 253,483
