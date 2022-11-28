@@ -1,41 +1,44 @@
-library("dplyr")
-library("readr")
-library("lubridate")
-library("gdata")
-library("stringr")
+library(tidyverse)
+library(gdata)
 
 mdy2 <- function(time1) {
-  time2 <- str_pad(time1, 8, side="left", pad="0")
-  time3 <- mdy(time2)
-  return(time3)
+  time2 <- time1 %>% 
+    str_pad(8, side="left", pad="0") %>% 
+    mdy
+  return(time2)
 }
 mdy_hms2 <- function(time1) {
-  time2 <- str_pad(time1, 14, side="right", pad="0")
-  time3 <- mdy_hms(time2)
-  return(time3)
+  time2 <- time1 %>% 
+    str_pad(14, side="right", pad="0") %>% 
+    mdy_hms
+  return(time2)
 }
 
 ReadAll <- function(file1, integer.columns=c(), time.columns=c()){
   df.small <- read_delim(file1, delim="^", n_max=1)
   ncol <- ncol(df.small)
   file.col.types <- ncol %>% rep("c", .) %>% paste(collapse="")
-  df <- read_delim(file1, delim="^", col_types=file.col.types)
-  df <- trim(df)
-  df[df==""] <- NA
+  df <- read_delim(file1, delim="^", col_types=file.col.types) %>% 
+    trim %>% 
+    na_if("")
+  #df <- trim(df)
+  #df[df==""] <- NA
+  column.names <- names(df)
   if(length(time.columns) > 0){
-    time.columns <- intersect(time.columns, names(df))
+    time.columns <- intersect(time.columns, column.names)
     for(column1 in time.columns){
       df[[column1]] <- mdy_hms2(df[[column1]])
     }
   }
   if(length(integer.columns) > 0){
-    integer.columns <- intersect(integer.columns, names(df))
+    integer.columns <- intersect(integer.columns, column.names)
     for(column1 in integer.columns){
-      df[[column1]] <- as.integer(df[[column1]])
+      df[[column1]] <- parse_integer(df[[column1]])
     }
   }
-  if("INC_DATE" %in% names(df)){
-    df <- mutate(df, INC_DATE=mdy2(INC_DATE))
+  if("INC_DATE" %in% column.names){
+    df <- df %>% 
+      mutate_at(vars(INC_DATE), mdy2)
   }
   if("VERSION" %in% names(df)){
     df <- select(df, -VERSION)

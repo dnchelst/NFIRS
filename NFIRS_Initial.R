@@ -1,5 +1,5 @@
-script.dir <- "/home/dchelst/git/NFIRS"
-data.dir <- "/home/dchelst/Public_Data/NFIRS/NFIRS2014"
+script.dir <- "/home/dchelst/Documents/Git-Projects/NFIRS"
+data.dir <- "/home/dchelst/Documents/NFIRS"
 source(file.path(script.dir, "nfirs_functions.R"))
 
 
